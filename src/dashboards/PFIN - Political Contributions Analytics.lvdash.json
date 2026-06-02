@@ -1,0 +1,4408 @@
+{
+  "datasets": [
+    {
+      "name": "0ab80c5d",
+      "displayName": "Dataset 1 - By Party",
+      "queryLines": [
+        "SELECT\n",
+        "  political_party,\n",
+        "  fiscal_year,\n",
+        "  total_monetary,\n",
+        "  total_non_monetary,\n",
+        "  total_amount,\n",
+        "  contribution_count,\n",
+        "  unique_contributors,\n",
+        "  avg_contribution\n",
+        "FROM\n",
+        "  pfin_dev.gold.contributions_by_party\n",
+        "WHERE\n",
+        "  WHERE array_contains(:fiscal_year, CAST(fiscal_year AS int))\n",
+        "ORDER BY\n",
+        "  total_amount DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Fiscal Year",
+          "keyword": "fiscal_year",
+          "dataType": "INTEGER",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "INTEGER",
+              "values": [
+                {
+                  "value": "2025"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "66b2dce3",
+      "displayName": "Dataset 2 - By Year",
+      "queryLines": [
+        "SELECT\n",
+        "  fiscal_year,\n",
+        "  total_monetary,\n",
+        "  total_non_monetary,\n",
+        "  total_amount,\n",
+        "  contribution_count,\n",
+        "  unique_contributors,\n",
+        "  unique_recipients,\n",
+        "  avg_contribution,\n",
+        "  median_contribution\n",
+        "FROM\n",
+        "  pfin_dev.gold.contributions_by_year\n",
+        "WHERE\n",
+        "  array_contains(:fiscal_year, fiscal_year)\n",
+        "ORDER BY\n",
+        "  fiscal_year DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Fiscal Year",
+          "keyword": "fiscal_year",
+          "dataType": "INTEGER",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "INTEGER",
+              "values": [
+                {
+                  "value": "2026"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1c4f4982",
+      "displayName": "Dataset 3 - By District",
+      "queryLines": [
+        "SELECT\n",
+        "  COALESCE(electoral_district, 'National / No District') AS electoral_district,\n",
+        "  fiscal_year,\n",
+        "  political_party,\n",
+        "  total_monetary,\n",
+        "  total_amount,\n",
+        "  contribution_count,\n",
+        "  unique_contributors\n",
+        "FROM\n",
+        "  pfin_dev.gold.contributions_by_district\n",
+        "WHERE\n",
+        "  array_contains(:fiscal_year, fiscal_year)\n",
+        "ORDER BY\n",
+        "  total_amount DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Fiscal Year",
+          "keyword": "fiscal_year",
+          "dataType": "INTEGER",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "INTEGER",
+              "values": [
+                {
+                  "value": "2026"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "a42d7ed0",
+      "displayName": "Dataset 4 - By Contributor Type",
+      "queryLines": [
+        "SELECT\n",
+        "  contributor_type,\n",
+        "  fiscal_year,\n",
+        "  total_monetary,\n",
+        "  total_amount,\n",
+        "  contribution_count,\n",
+        "  unique_contributors,\n",
+        "  pct_of_total_amount\n",
+        "FROM\n",
+        "  pfin_dev.gold.contributions_by_contributor_type\n",
+        "WHERE\n",
+        "  array_contains(:fiscal_year, fiscal_year)\n",
+        "ORDER BY\n",
+        "  total_amount DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Fiscal Year",
+          "keyword": "fiscal_year",
+          "dataType": "INTEGER",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "INTEGER",
+              "values": [
+                {
+                  "value": "2026"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "a4eb9b33",
+      "displayName": "Dataset 5 - Top Contributors",
+      "queryLines": [
+        "SELECT\n",
+        "  contributor_name,\n",
+        "  contributor_type,\n",
+        "  COALESCE(contributor_province, 'Unknown') AS contributor_province,\n",
+        "  fiscal_year,\n",
+        "  total_monetary,\n",
+        "  total_amount,\n",
+        "  contribution_count,\n",
+        "  parties_contributed_to,\n",
+        "  rank_in_year\n",
+        "FROM\n",
+        "  pfin_dev.gold.top_contributors\n",
+        "WHERE\n",
+        "  array_contains(:fiscal_year, fiscal_year)\n",
+        "ORDER BY\n",
+        "  rank_in_year"
+      ],
+      "parameters": [
+        {
+          "displayName": "Fiscal Year",
+          "keyword": "fiscal_year",
+          "dataType": "INTEGER",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "INTEGER",
+              "values": [
+                {
+                  "value": "2026"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ec9a7311",
+      "displayName": "Dataset 6 - Party Share",
+      "queryLines": [
+        "SELECT\n",
+        "  political_party,\n",
+        "  total_amount,\n",
+        "  ROUND(total_amount * 100.0 / SUM(total_amount) OVER (), 2) AS pct_share\n",
+        "FROM\n",
+        "  pfin_dev.gold.contributions_by_party\n",
+        "WHERE\n",
+        "  array_contains(:fiscal_year, fiscal_year)\n",
+        "ORDER BY\n",
+        "  total_amount DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Fiscal Year",
+          "keyword": "fiscal_year",
+          "dataType": "INTEGER",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "INTEGER",
+              "values": [
+                {
+                  "value": "2026"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "a098a6a7",
+      "displayName": "Dataset 7 - Province Summary",
+      "queryLines": [
+        "SELECT COALESCE(c.contributor_province, 'Unknown') AS contributor_province,\n",
+        "       COUNT(DISTINCT c.contributor_key) AS contributor_count,\n",
+        "       SUM(cn.monetary_amount) AS total_monetary,\n",
+        "       SUM(cn.total_amount) AS total_amount,\n",
+        "       ROUND(AVG(cn.total_amount), 2) AS avg_amount\n",
+        "FROM pfin_dev.silver.contributions cn\n",
+        "JOIN pfin_dev.silver.contributors c\n",
+        "  ON cn.contributor_key = c.contributor_key\n",
+        "JOIN pfin_dev.silver.electoral_events e\n",
+        "  ON cn.electoral_event_key = e.electoral_event_key\n",
+        "WHERE array_contains(:fiscal_year, e.fiscal_year)\n",
+        "GROUP BY COALESCE(c.contributor_province, 'Unknown')\n",
+        "ORDER BY total_amount DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Fiscal Year",
+          "keyword": "fiscal_year",
+          "dataType": "INTEGER",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "INTEGER",
+              "values": [
+                {
+                  "value": "2025"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "f13d4896",
+      "displayName": "Dataset 8 - Multi Party Donors",
+      "queryLines": [
+        "SELECT\n",
+        "  contributor_name,\n",
+        "  contributor_province,\n",
+        "  total_amount,\n",
+        "  contribution_count,\n",
+        "  parties_contributed_to\n",
+        "FROM\n",
+        "  pfin_dev.gold.top_contributors\n",
+        "WHERE\n",
+        "  parties_contributed_to LIKE '%,%'\n",
+        "  AND array_contains(:fiscal_year, fiscal_year)\n",
+        "ORDER BY\n",
+        "  total_amount DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Fiscal Year",
+          "keyword": "fiscal_year",
+          "dataType": "INTEGER",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "INTEGER",
+              "values": [
+                {
+                  "value": "2026"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "107d4e90",
+      "displayName": "Dataset 9 - Contribution Distribution",
+      "queryLines": [
+        "SELECT CASE\n",
+        "         WHEN cn.total_amount < 100 THEN '1. < $100'\n",
+        "         WHEN cn.total_amount < 500 THEN '2. $100–$499'\n",
+        "         WHEN cn.total_amount < 1000 THEN '3. $500–$999'\n",
+        "         WHEN cn.total_amount < 2000 THEN '4. $1,000–$1,999'\n",
+        "         ELSE '5. $2,000+'\n",
+        "       END AS amount_range,\n",
+        "       COUNT(*) AS contribution_count,\n",
+        "       SUM(cn.total_amount) AS total_in_range\n",
+        "FROM pfin_dev.silver.contributions cn\n",
+        "JOIN pfin_dev.silver.electoral_events e\n",
+        "  ON cn.electoral_event_key = e.electoral_event_key\n",
+        "WHERE array_contains(:fiscal_year, e.fiscal_year)\n",
+        "GROUP BY 1\n",
+        "ORDER BY 1"
+      ],
+      "parameters": [
+        {
+          "displayName": "Fiscal Year",
+          "keyword": "fiscal_year",
+          "dataType": "INTEGER",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "INTEGER",
+              "values": [
+                {
+                  "value": "2026"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05a3084d",
+      "displayName": "Dataset 10 - Party Year Comparison",
+      "queryLines": [
+        "SELECT\r\n",
+        "  political_party,\r\n",
+        "  fiscal_year,\r\n",
+        "  total_amount,\r\n",
+        "  contribution_count,\r\n",
+        "  unique_contributors,\r\n",
+        "  avg_contribution\r\n",
+        "FROM\r\n",
+        "  pfin_dev.gold.contributions_by_party\r\n",
+        "WHERE\r\n",
+        "  array_contains(:fiscal_year, fiscal_year)\r\n",
+        "ORDER BY\r\n",
+        "  political_party,\r\n",
+        "  fiscal_year"
+      ],
+      "parameters": [
+        {
+          "displayName": "Fiscal Year",
+          "keyword": "fiscal_year",
+          "dataType": "INTEGER",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "INTEGER",
+              "values": [
+                {
+                  "value": "2025"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1e8f1dc5",
+      "displayName": "Dataset 11 - Top Districts Anomaly",
+      "queryLines": [
+        "SELECT electoral_district, political_party,\r\n",
+        "       total_amount, contribution_count, unique_contributors,\r\n",
+        "       ROUND(total_amount / unique_contributors, 2) AS avg_per_contributor,\r\n",
+        "       CASE\r\n",
+        "         WHEN total_amount / unique_contributors > 1500 THEN 'High Avg'\r\n",
+        "         WHEN unique_contributors = 1 AND total_amount > 1000 THEN 'Single Donor'\r\n",
+        "         ELSE 'Normal'\r\n",
+        "       END AS anomaly_flag\r\n",
+        "FROM pfin_dev.gold.contributions_by_district\r\n",
+        "WHERE electoral_district != 'National / No District'\r\n",
+        "  AND array_contains(:fiscal_year, fiscal_year)\r\n",
+        "ORDER BY avg_per_contributor DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Fiscal Year",
+          "keyword": "fiscal_year",
+          "dataType": "INTEGER",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "INTEGER",
+              "values": [
+                {
+                  "value": "2026"
+                },
+                {
+                  "value": "2025"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5c5b36ec",
+      "displayName": "Dataset 12 - Contribution Curve",
+      "queryLines": [
+        "SELECT CONCAT('$', FLOOR(cn.total_amount / 200) * 200, '–$', FLOOR(cn.total_amount / 200) * 200 + 199) AS amount_range,\r\n",
+        "       FLOOR(cn.total_amount / 200) * 200 AS sort_key,\r\n",
+        "       e.fiscal_year,\r\n",
+        "       COUNT(*) AS contributions,\r\n",
+        "       ROUND(SUM(cn.total_amount), 2) AS total_dollars\r\n",
+        "FROM pfin_dev.silver.contributions cn\r\n",
+        "JOIN pfin_dev.silver.electoral_events e\r\n",
+        "  ON cn.electoral_event_key = e.electoral_event_key\r\n",
+        "WHERE cn.total_amount >= 1\r\n",
+        "  AND cn.total_amount <= 3000\r\n",
+        "GROUP BY 1, 2, 3\r\n",
+        "ORDER BY sort_key"
+      ]
+    },
+    {
+      "name": "7dbb2692",
+      "displayName": "Dataset 13 - Province By Party",
+      "queryLines": [
+        "SELECT\n",
+        "  COALESCE(c.contributor_province, 'Unknown') AS province,\n",
+        "  r.political_party,\n",
+        "  COUNT(*) AS contributions,\n",
+        "  SUM(cn.total_amount) AS total_amount\n",
+        "FROM\n",
+        "  pfin_dev.silver.contributions cn\n",
+        "    JOIN pfin_dev.silver.contributors c\n",
+        "      ON cn.contributor_key = c.contributor_key\n",
+        "    JOIN pfin_dev.silver.recipients r\n",
+        "      ON cn.recipient_id = r.recipient_id\n",
+        "    JOIN pfin_dev.silver.electoral_events e\n",
+        "      ON cn.electoral_event_key = e.electoral_event_key\n",
+        "WHERE\n",
+        "  array_contains(:fiscal_year, e.fiscal_year)\n",
+        "GROUP BY\n",
+        "  1,\n",
+        "  2\n",
+        "ORDER BY\n",
+        "  total_amount DESC"
+      ],
+      "parameters": [
+        {
+          "displayName": "Fiscal Year",
+          "keyword": "fiscal_year",
+          "dataType": "INTEGER",
+          "complexType": "MULTI",
+          "defaultSelection": {
+            "values": {
+              "dataType": "INTEGER",
+              "values": [
+                {
+                  "value": "2025"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "f65e8bc5",
+      "displayName": "Dataset 14 - Province Top 10",
+      "queryLines": [
+        "SELECT\n",
+        "  COALESCE(c.contributor_province, 'Unknown') AS province,\n",
+        "  e.fiscal_year,\n",
+        "  COUNT(*) AS contributions,\n",
+        "  COUNT(DISTINCT c.contributor_key) AS unique_contributors,\n",
+        "  SUM(cn.monetary_amount) AS total_monetary,\n",
+        "  SUM(cn.total_amount) AS total_amount,\n",
+        "  ROUND(AVG(cn.total_amount), 2) AS avg_contribution\n",
+        "FROM\n",
+        "  pfin_dev.silver.contributions cn\n",
+        "    JOIN pfin_dev.silver.contributors c\n",
+        "      ON cn.contributor_key = c.contributor_key\n",
+        "    JOIN pfin_dev.silver.electoral_events e\n",
+        "      ON cn.electoral_event_key = e.electoral_event_key\n",
+        "GROUP BY\n",
+        "  1,\n",
+        "  2\n",
+        "ORDER BY\n",
+        "  total_amount DESC\n",
+        "LIMIT 10"
+      ]
+    },
+    {
+      "name": "e2fb1444",
+      "displayName": "Dataset 15 - Party Province Matrix",
+      "queryLines": [
+        "SELECT r.political_party,\r\n",
+        "       COALESCE(c.contributor_province, 'Unknown') AS province,\r\n",
+        "       e.fiscal_year,\r\n",
+        "       SUM(cn.total_amount) AS total_amount,\r\n",
+        "       COUNT(*) AS contributions\r\n",
+        "FROM pfin_dev.silver.contributions cn\r\n",
+        "JOIN pfin_dev.silver.contributors c ON cn.contributor_key = c.contributor_key\r\n",
+        "JOIN pfin_dev.silver.recipients r ON cn.recipient_id = r.recipient_id\r\n",
+        "JOIN pfin_dev.silver.electoral_events e ON cn.electoral_event_key = e.electoral_event_key\r\n",
+        "GROUP BY 1, 2, 3\r\n",
+        "ORDER BY total_amount DESC"
+      ]
+    },
+    {
+      "name": "f5ab0f53",
+      "displayName": "Dataset 16 - Party Monetary Split",
+      "queryLines": [
+        "SELECT r.political_party,\r\n",
+        "       e.fiscal_year,\r\n",
+        "       SUM(cn.monetary_amount) AS monetary,\r\n",
+        "       SUM(cn.non_monetary_amount) AS non_monetary,\r\n",
+        "       SUM(cn.total_amount) AS total_amount,\r\n",
+        "       COUNT(*) AS contributions\r\n",
+        "FROM pfin_dev.silver.contributions cn\r\n",
+        "JOIN pfin_dev.silver.recipients r ON cn.recipient_id = r.recipient_id\r\n",
+        "JOIN pfin_dev.silver.electoral_events e ON cn.electoral_event_key = e.electoral_event_key\r\n",
+        "GROUP BY 1, 2\r\n",
+        "ORDER BY total_amount DESC"
+      ]
+    },
+    {
+      "name": "f1cbd1ca",
+      "displayName": "Dataset 17 - Party Avg. vs Count:",
+      "queryLines": [
+        "SELECT r.political_party,\r\n",
+        "       e.fiscal_year,\r\n",
+        "       COUNT(*) AS contributions,\r\n",
+        "       COUNT(DISTINCT cn.contributor_key) AS unique_contributors,\r\n",
+        "       ROUND(AVG(cn.total_amount), 2) AS avg_contribution,\r\n",
+        "       ROUND(PERCENTILE_APPROX(cn.total_amount, 0.5), 2) AS median_contribution,\r\n",
+        "       SUM(cn.total_amount) AS total_amount\r\n",
+        "FROM pfin_dev.silver.contributions cn\r\n",
+        "JOIN pfin_dev.silver.recipients r ON cn.recipient_id = r.recipient_id\r\n",
+        "JOIN pfin_dev.silver.electoral_events e ON cn.electoral_event_key = e.electoral_event_key\r\n",
+        "GROUP BY 1, 2\r\n",
+        "ORDER BY total_amount DESC"
+      ]
+    },
+    {
+      "name": "f3f46a23",
+      "displayName": "Dataset 18 - Contributor Frequency",
+      "queryLines": [
+        "SELECT contribution_count_bucket,\r\n",
+        "       COUNT(*) AS contributor_count,\r\n",
+        "       SUM(total_contributed) AS total_dollars\r\n",
+        "FROM (\r\n",
+        "  SELECT cn.contributor_key,\r\n",
+        "         COUNT(*) AS num_contributions,\r\n",
+        "         SUM(cn.total_amount) AS total_contributed,\r\n",
+        "         CASE\r\n",
+        "           WHEN COUNT(*) = 1 THEN '1. Single'\r\n",
+        "           WHEN COUNT(*) BETWEEN 2 AND 5 THEN '2. Occasional (2–5)'\r\n",
+        "           WHEN COUNT(*) BETWEEN 6 AND 10 THEN '3. Regular (6–10)'\r\n",
+        "           ELSE '4. Frequent (10+)'\r\n",
+        "         END AS contribution_count_bucket\r\n",
+        "  FROM pfin_dev.silver.contributions cn\r\n",
+        "  JOIN pfin_dev.silver.electoral_events e ON cn.electoral_event_key = e.electoral_event_key\r\n",
+        "  GROUP BY cn.contributor_key\r\n",
+        ")\r\n",
+        "GROUP BY 1\r\n",
+        "ORDER BY 1"
+      ]
+    },
+    {
+      "name": "87103869",
+      "displayName": "Dataset 19 - Contributor Scatter",
+      "queryLines": [
+        "SELECT c.contributor_name,\r\n",
+        "       COALESCE(c.contributor_province, 'Unknown') AS province,\r\n",
+        "       e.fiscal_year,\r\n",
+        "       COUNT(*) AS num_contributions,\r\n",
+        "       SUM(cn.total_amount) AS total_contributed,\r\n",
+        "       ROUND(AVG(cn.total_amount), 2) AS avg_per_contribution\r\n",
+        "FROM pfin_dev.silver.contributions cn\r\n",
+        "JOIN pfin_dev.silver.contributors c ON cn.contributor_key = c.contributor_key\r\n",
+        "JOIN pfin_dev.silver.electoral_events e ON cn.electoral_event_key = e.electoral_event_key\r\n",
+        "GROUP BY 1, 2, 3\r\n",
+        "HAVING SUM(cn.total_amount) BETWEEN 500 AND 50000\r\n",
+        "   AND COUNT(*) <= 50\r\n",
+        "ORDER BY total_contributed DESC\r\n",
+        "LIMIT 200"
+      ]
+    },
+    {
+      "name": "41557785",
+      "displayName": "Dataset 20 - Repeat vs New",
+      "queryLines": [
+        "SELECT CASE\r\n",
+        "         WHEN contribution_count = 1 THEN 'One-Time Donor'\r\n",
+        "         ELSE 'Repeat Donor'\r\n",
+        "       END AS donor_type,\r\n",
+        "       fiscal_year,\r\n",
+        "       COUNT(*) AS donor_count,\r\n",
+        "       SUM(total_amount) AS total_contributed,\r\n",
+        "       ROUND(AVG(total_amount), 2) AS avg_amount\r\n",
+        "FROM (\r\n",
+        "  SELECT cn.contributor_key,\r\n",
+        "         e.fiscal_year,\r\n",
+        "         COUNT(*) AS contribution_count,\r\n",
+        "         SUM(cn.total_amount) AS total_amount\r\n",
+        "  FROM pfin_dev.silver.contributions cn\r\n",
+        "  JOIN pfin_dev.silver.electoral_events e ON cn.electoral_event_key = e.electoral_event_key\r\n",
+        "  GROUP BY cn.contributor_key, e.fiscal_year\r\n",
+        ")\r\n",
+        "GROUP BY 1, 2"
+      ]
+    },
+    {
+      "name": "076dfecc",
+      "displayName": "Dataset 21 - Non-Monetary Pct",
+      "queryLines": [
+        "SELECT r.political_party,\r\n",
+        "       e.fiscal_year,\r\n",
+        "       SUM(cn.monetary_amount) AS monetary,\r\n",
+        "       SUM(cn.non_monetary_amount) AS non_monetary,\r\n",
+        "       ROUND(SUM(cn.non_monetary_amount) / NULLIF(SUM(cn.total_amount), 0) * 100, 2) AS non_monetary_pct\r\n",
+        "FROM pfin_dev.silver.contributions cn\r\n",
+        "JOIN pfin_dev.silver.recipients r ON cn.recipient_id = r.recipient_id\r\n",
+        "JOIN pfin_dev.silver.electoral_events e ON cn.electoral_event_key = e.electoral_event_key\r\n",
+        "GROUP BY 1, 2\r\n",
+        "HAVING SUM(cn.non_monetary_amount) > 0\r\n",
+        "ORDER BY non_monetary_pct DESC"
+      ]
+    },
+    {
+      "name": "31e585ba",
+      "displayName": "Dataset 22 - Anomaly Distribution",
+      "queryLines": [
+        "SELECT FLOOR(avg_per_contributor / 100) * 100 AS avg_bucket,\r\n",
+        "       fiscal_year,\r\n",
+        "       COUNT(*) AS district_count,\r\n",
+        "       SUM(total_amount) AS total_in_bucket,\r\n",
+        "       SUM(CASE WHEN anomaly_flag != 'Normal' THEN 1 ELSE 0 END) AS anomaly_count\r\n",
+        "FROM (\r\n",
+        "  SELECT electoral_district, political_party, fiscal_year,\r\n",
+        "         total_amount, contribution_count, unique_contributors,\r\n",
+        "         ROUND(total_amount / unique_contributors, 2) AS avg_per_contributor,\r\n",
+        "         CASE\r\n",
+        "           WHEN total_amount / unique_contributors > 1500 THEN 'High Avg'\r\n",
+        "           WHEN unique_contributors = 1 AND total_amount > 1000 THEN 'Single Donor'\r\n",
+        "           ELSE 'Normal'\r\n",
+        "         END AS anomaly_flag\r\n",
+        "  FROM pfin_dev.gold.contributions_by_district\r\n",
+        "  WHERE electoral_district != 'National / No District'\r\n",
+        ")\r\n",
+        "GROUP BY 1, 2\r\n",
+        "ORDER BY 1"
+      ]
+    },
+    {
+      "name": "3b9f3835",
+      "displayName": "Dataset 23 - Over Limit Contributors",
+      "queryLines": [
+        "SELECT c.contributor_name,\r\n",
+        "       COALESCE(c.contributor_province, 'Unknown') AS province,\r\n",
+        "       r.political_party,\r\n",
+        "       e.fiscal_year,\r\n",
+        "       SUM(cn.monetary_amount) AS total_monetary,\r\n",
+        "       SUM(cn.total_amount) AS total_contributed,\r\n",
+        "       COUNT(*) AS num_contributions,\r\n",
+        "       CASE WHEN e.fiscal_year = 2025 THEN 1750 ELSE 1775 END AS annual_limit,\r\n",
+        "       SUM(cn.total_amount) - CASE WHEN e.fiscal_year = 2025 THEN 1750 ELSE 1775 END AS amount_over_limit\r\n",
+        "FROM pfin_dev.silver.contributions cn\r\n",
+        "JOIN pfin_dev.silver.contributors c ON cn.contributor_key = c.contributor_key\r\n",
+        "JOIN pfin_dev.silver.recipients r ON cn.recipient_id = r.recipient_id\r\n",
+        "JOIN pfin_dev.silver.electoral_events e ON cn.electoral_event_key = e.electoral_event_key\r\n",
+        "GROUP BY 1, 2, 3, 4\r\n",
+        "HAVING SUM(cn.total_amount) > CASE WHEN e.fiscal_year = 2025 THEN 1750 ELSE 1775 END\r\n",
+        "ORDER BY amount_over_limit DESC"
+      ]
+    },
+    {
+      "name": "7a9d237a",
+      "displayName": "Dataset 24 - High Total Across Parties",
+      "queryLines": [
+        "WITH contributor_party_totals AS (\n",
+        "  SELECT\n",
+        "    c.contributor_name,\n",
+        "    COALESCE(c.contributor_province, 'Unknown') AS province,\n",
+        "    e.fiscal_year,\n",
+        "    r.political_party,\n",
+        "    COUNT(*) AS num_contributions_to_party,\n",
+        "    SUM(cn.total_amount) AS total_to_party\n",
+        "  FROM\n",
+        "    pfin_dev.silver.contributions cn\n",
+        "      JOIN pfin_dev.silver.contributors c\n",
+        "        ON cn.contributor_key = c.contributor_key\n",
+        "      JOIN pfin_dev.silver.recipients r\n",
+        "        ON cn.recipient_id = r.recipient_id\n",
+        "      JOIN pfin_dev.silver.electoral_events e\n",
+        "        ON cn.electoral_event_key = e.electoral_event_key\n",
+        "  GROUP BY\n",
+        "    1,\n",
+        "    2,\n",
+        "    3,\n",
+        "    4\n",
+        "),\n",
+        "contributor_rollup AS (\n",
+        "  SELECT\n",
+        "    contributor_name,\n",
+        "    province,\n",
+        "    fiscal_year,\n",
+        "    SUM(total_to_party) AS grand_total,\n",
+        "    COUNT(DISTINCT political_party) AS parties_count,\n",
+        "    CONCAT_WS(', ', SORT_ARRAY(COLLECT_SET(political_party))) AS parties_list,\n",
+        "    SUM(num_contributions_to_party) AS num_contributions\n",
+        "  FROM\n",
+        "    contributor_party_totals\n",
+        "  GROUP BY\n",
+        "    1,\n",
+        "    2,\n",
+        "    3\n",
+        ")\n",
+        "SELECT\n",
+        "  contributor_name,\n",
+        "  province,\n",
+        "  fiscal_year,\n",
+        "  grand_total,\n",
+        "  parties_count,\n",
+        "  parties_list,\n",
+        "  num_contributions\n",
+        "FROM\n",
+        "  contributor_rollup\n",
+        "WHERE\n",
+        "  parties_count > 1\n",
+        "  AND grand_total\n",
+        "    > CASE\n",
+        "      WHEN fiscal_year = 2025 THEN 1750\n",
+        "      ELSE 1775\n",
+        "    END\n",
+        "ORDER BY\n",
+        "  grand_total DESC"
+      ]
+    },
+    {
+      "name": "6d7803c3",
+      "displayName": "Dataset 25 - Large Single Ccontributions",
+      "queryLines": [
+        "SELECT c.contributor_name,\r\n",
+        "       COALESCE(c.contributor_province, 'Unknown') AS province,\r\n",
+        "       r.political_party,\r\n",
+        "       e.fiscal_year,\r\n",
+        "       cn.monetary_amount,\r\n",
+        "       cn.non_monetary_amount,\r\n",
+        "       cn.total_amount,\r\n",
+        "       cn.contribution_received_date\r\n",
+        "FROM pfin_dev.silver.contributions cn\r\n",
+        "JOIN pfin_dev.silver.contributors c ON cn.contributor_key = c.contributor_key\r\n",
+        "JOIN pfin_dev.silver.recipients r ON cn.recipient_id = r.recipient_id\r\n",
+        "JOIN pfin_dev.silver.electoral_events e ON cn.electoral_event_key = e.electoral_event_key\r\n",
+        "WHERE cn.total_amount > CASE WHEN e.fiscal_year = 2025 THEN 1750 ELSE 1775 END\r\n",
+        "ORDER BY cn.total_amount DESC"
+      ]
+    },
+    {
+      "name": "da09a891",
+      "displayName": "Dataset 26 - Missing Data Large Donors",
+      "queryLines": [
+        "SELECT c.contributor_name,\r\n",
+        "       c.contributor_province,\r\n",
+        "       c.contributor_city,\r\n",
+        "       c.contributor_postal_code,\r\n",
+        "       e.fiscal_year,\r\n",
+        "       SUM(cn.total_amount) AS total_contributed,\r\n",
+        "       COUNT(*) AS num_contributions,\r\n",
+        "       CASE\r\n",
+        "         WHEN c.contributor_province IS NULL THEN 'Missing Province'\r\n",
+        "         WHEN c.contributor_city IS NULL THEN 'Missing City'\r\n",
+        "         WHEN c.contributor_postal_code IS NULL THEN 'Missing Postal Code'\r\n",
+        "       END AS missing_field\r\n",
+        "FROM pfin_dev.silver.contributions cn\r\n",
+        "JOIN pfin_dev.silver.contributors c ON cn.contributor_key = c.contributor_key\r\n",
+        "JOIN pfin_dev.silver.electoral_events e ON cn.electoral_event_key = e.electoral_event_key\r\n",
+        "WHERE (c.contributor_province IS NULL\r\n",
+        "    OR c.contributor_city IS NULL\r\n",
+        "    OR c.contributor_postal_code IS NULL)\r\n",
+        "GROUP BY 1, 2, 3, 4, 5\r\n",
+        "HAVING SUM(cn.total_amount) > 500\r\n",
+        "ORDER BY total_contributed DESC"
+      ]
+    },
+    {
+      "name": "526198da",
+      "displayName": "Dataset 27 - Frequent Small Donations",
+      "queryLines": [
+        "SELECT c.contributor_name,\r\n",
+        "       COALESCE(c.contributor_province, 'Unknown') AS province,\r\n",
+        "       r.political_party,\r\n",
+        "       e.fiscal_year,\r\n",
+        "       COUNT(*) AS num_contributions,\r\n",
+        "       SUM(cn.total_amount) AS total_contributed,\r\n",
+        "       ROUND(AVG(cn.total_amount), 2) AS avg_per_contribution\r\n",
+        "FROM pfin_dev.silver.contributions cn\r\n",
+        "JOIN pfin_dev.silver.contributors c ON cn.contributor_key = c.contributor_key\r\n",
+        "JOIN pfin_dev.silver.recipients r ON cn.recipient_id = r.recipient_id\r\n",
+        "JOIN pfin_dev.silver.electoral_events e ON cn.electoral_event_key = e.electoral_event_key\r\n",
+        "GROUP BY 1, 2, 3, 4\r\n",
+        "HAVING COUNT(*) >= 10\r\n",
+        "   AND AVG(cn.total_amount) < 100\r\n",
+        "ORDER BY num_contributions DESC"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "5a39f816",
+      "displayName": "Canadian Political Contributions - Overview",
+      "layout": [
+        {
+          "widget": {
+            "name": "total-contributions",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "66b2dce3",
+                  "fields": [
+                    {
+                      "name": "sum(total_amount)",
+                      "expression": "SUM(`total_amount`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total Amount Contributed",
+                "contentAlignment": "center",
+                "headerAlignment": "center"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#15803D",
+                  "dark": "#22C55E"
+                }
+              },
+              "format": {
+                "numberFormat": {
+                  "formatType": "numeral",
+                  "format": "$0,0.00"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(total_amount)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "total-records",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "66b2dce3",
+                  "fields": [
+                    {
+                      "name": "sum(contribution_count)",
+                      "expression": "SUM(`contribution_count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Contribution Count",
+                "contentAlignment": "center",
+                "headerAlignment": "center"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#1D4ED8",
+                  "dark": "#60A5FA"
+                }
+              },
+              "format": {
+                "numberFormat": {
+                  "formatType": "numeral",
+                  "format": "0,0"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(contribution_count)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "a654be1e",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "66b2dce3",
+                  "fields": [
+                    {
+                      "name": "sum(avg_contribution)",
+                      "expression": "SUM(`avg_contribution`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Average Contribution",
+                "contentAlignment": "center",
+                "headerAlignment": "center"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#B45309",
+                  "dark": "#F59E0B"
+                }
+              },
+              "format": {
+                "numberFormat": {
+                  "formatType": "numeral",
+                  "format": "$0,0.00"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(avg_contribution)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "cd1d6bfd",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "66b2dce3",
+                  "fields": [
+                    {
+                      "name": "sum(unique_contributors)",
+                      "expression": "SUM(`unique_contributors`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Unique Contributors",
+                "contentAlignment": "center",
+                "headerAlignment": "center"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#7C3AED",
+                  "dark": "#A78BFA"
+                }
+              },
+              "format": {
+                "numberFormat": {
+                  "formatType": "numeral",
+                  "format": "0,0"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(unique_contributors)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "contributions-by-party",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "0ab80c5d",
+                  "fields": [
+                    {
+                      "name": "political_party",
+                      "expression": "`political_party`"
+                    },
+                    {
+                      "name": "total_amount",
+                      "expression": "`total_amount`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Party Contribution Leaders",
+                "showDescription": false
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#172554",
+                  "dark": "#DBEAFE"
+                }
+              },
+              "mark": {
+                "colors": [
+                  "#2563EB",
+                  "#16A34A",
+                  "#DC2626",
+                  "#F59E0B",
+                  "#7C3AED",
+                  "#EC4899"
+                ],
+                "opacity": 0.95
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "political_party",
+                  "axis": {
+                    "title": "Political Party",
+                    "labelAngle": 45
+                  },
+                  "displayName": "Political Party",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "total_amount",
+                  "axis": {
+                    "title": "Total Contributions (CAD)"
+                  },
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "CAD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    }
+                  },
+                  "displayName": "Total Contributions",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "top-20-districts",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1c4f4982",
+                  "fields": [
+                    {
+                      "name": "electoral_district",
+                      "expression": "`electoral_district`"
+                    },
+                    {
+                      "name": "sum(total_amount)",
+                      "expression": "SUM(`total_amount`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Top 20 Electoral Districts by Contributions",
+                "showDescription": false
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#172554",
+                  "dark": "#DBEAFE"
+                }
+              },
+              "mark": {
+                "colors": [
+                  "#0EA5E9",
+                  "#14B8A6",
+                  "#22C55E",
+                  "#A855F7",
+                  "#F97316",
+                  "#E11D48"
+                ],
+                "opacity": 0.95
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "electoral_district",
+                  "axis": {
+                    "title": "Electoral District",
+                    "labelAngle": 45
+                  },
+                  "displayName": "Electoral District",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_amount)",
+                  "axis": {
+                    "title": "Total Contributions (CAD)"
+                  },
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "CAD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    }
+                  },
+                  "displayName": "Total Contributions",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 12,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "electoral_district_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1c4f4982",
+                  "fields": [
+                    {
+                      "name": "electoral_district",
+                      "expression": "`electoral_district`"
+                    },
+                    {
+                      "name": "fiscal_year",
+                      "expression": "`fiscal_year`"
+                    },
+                    {
+                      "name": "political_party",
+                      "expression": "`political_party`"
+                    },
+                    {
+                      "name": "total_monetary",
+                      "expression": "`total_monetary`"
+                    },
+                    {
+                      "name": "total_amount",
+                      "expression": "`total_amount`"
+                    },
+                    {
+                      "name": "contribution_count",
+                      "expression": "`contribution_count`"
+                    },
+                    {
+                      "name": "unique_contributors",
+                      "expression": "`unique_contributors`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Electoral District Contributions Table",
+                "headerAlignment": "left"
+              },
+              "displayRowNumbers": false,
+              "freezeUpToColumnNumber": 0,
+              "headerHeight": 84,
+              "rowsPerPage": 10,
+              "bandedRows": {
+                "enabled": true,
+                "backgroundColor": "#F8FAFC",
+                "fontColor": "#0F172A"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#0F172A",
+                  "dark": "#E5E7EB"
+                }
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "electoral_district",
+                    "columnWidth": 150,
+                    "contentAlignment": "left",
+                    "displayName": "Electoral District",
+                    "style": {
+                      "type": "basic",
+                      "bold": true
+                    }
+                  },
+                  {
+                    "fieldName": "fiscal_year",
+                    "columnWidth": 68,
+                    "contentAlignment": "center",
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 0
+                      }
+                    },
+                    "displayName": "Fiscal Year"
+                  },
+                  {
+                    "fieldName": "political_party",
+                    "columnWidth": 120,
+                    "contentAlignment": "left",
+                    "displayName": "Political Party"
+                  },
+                  {
+                    "fieldName": "total_monetary",
+                    "columnWidth": 98,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "USD",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 1
+                      }
+                    },
+                    "displayName": "Monetary Contributions"
+                  },
+                  {
+                    "fieldName": "total_amount",
+                    "columnWidth": 98,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "USD",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 1
+                      }
+                    },
+                    "displayName": "Total Contributions",
+                    "style": {
+                      "type": "basic",
+                      "foregroundColor": "#15803D",
+                      "bold": true
+                    }
+                  },
+                  {
+                    "fieldName": "contribution_count",
+                    "columnWidth": 88,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 0
+                      }
+                    },
+                    "displayName": "Contribution Count"
+                  },
+                  {
+                    "fieldName": "unique_contributors",
+                    "columnWidth": 88,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 0
+                      }
+                    },
+                    "displayName": "Unique Contributors"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 16,
+            "width": 12,
+            "height": 7
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "f4b81fa5",
+      "displayName": "Contributor Insights",
+      "layout": [
+        {
+          "widget": {
+            "name": "co",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a098a6a7",
+                  "fields": [
+                    {
+                      "name": "total_amount",
+                      "expression": "`total_amount`"
+                    },
+                    {
+                      "name": "contributor_province",
+                      "expression": "`contributor_province`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Contributions by Province",
+                "showDescription": false
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#172554",
+                  "dark": "#DBEAFE"
+                }
+              },
+              "mark": {
+                "colors": [
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "total_amount",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Total Amount"
+                },
+                "color": {
+                  "fieldName": "contributor_province",
+                  "displayName": "Contributor Province",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                },
+                "extra": [
+                  {
+                    "fieldName": "contributor_province"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "contribution-size-distribution",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "107d4e90",
+                  "fields": [
+                    {
+                      "name": "contribution_count",
+                      "expression": "`contribution_count`"
+                    },
+                    {
+                      "name": "amount_range",
+                      "expression": "`amount_range`"
+                    },
+                    {
+                      "name": "total_in_range",
+                      "expression": "`total_in_range`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Contribution Size Distribution",
+                "showDescription": false
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#172554",
+                  "dark": "#DBEAFE"
+                }
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "amount_range",
+                  "displayName": "Amount Range",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "total_in_range",
+                  "displayName": "Total in Range",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "contribution_count",
+                  "displayName": "Count per Range",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": false
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "multi-party-donors",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a4eb9b33",
+                  "fields": [
+                    {
+                      "name": "rank_in_year",
+                      "expression": "`rank_in_year`"
+                    },
+                    {
+                      "name": "contributor_name",
+                      "expression": "`contributor_name`"
+                    },
+                    {
+                      "name": "contributor_province",
+                      "expression": "`contributor_province`"
+                    },
+                    {
+                      "name": "total_amount",
+                      "expression": "`total_amount`"
+                    },
+                    {
+                      "name": "contribution_count",
+                      "expression": "`contribution_count`"
+                    },
+                    {
+                      "name": "parties_contributed_to",
+                      "expression": "`parties_contributed_to`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Multi-Party Donors Table",
+                "headerAlignment": "left"
+              },
+              "displayRowNumbers": false,
+              "freezeUpToColumnNumber": 1,
+              "headerHeight": 72,
+              "rowsPerPage": 10,
+              "headerStyle": {
+                "backgroundColor": "#1E3A8A",
+                "foregroundColor": "#EFF6FF",
+                "bold": true
+              },
+              "bandedRows": {
+                "enabled": true,
+                "backgroundColor": "#DBEAFE",
+                "fontColor": "#0F172A"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#0F172A",
+                  "dark": "#E5E7EB"
+                }
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "rank_in_year",
+                    "columnWidth": 56,
+                    "contentAlignment": "center",
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 0
+                      }
+                    },
+                    "displayName": "Rank",
+                    "style": {
+                      "type": "basic",
+                      "bold": true,
+                      "foregroundColor": "#1E3A8A"
+                    }
+                  },
+                  {
+                    "fieldName": "contributor_name",
+                    "columnWidth": 180,
+                    "contentAlignment": "left",
+                    "displayName": "Contributor\nName",
+                    "style": {
+                      "type": "basic",
+                      "bold": true
+                    }
+                  },
+                  {
+                    "fieldName": "contributor_province",
+                    "columnWidth": 88,
+                    "contentAlignment": "center",
+                    "displayName": "Province"
+                  },
+                  {
+                    "fieldName": "total_amount",
+                    "columnWidth": 100,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "CAD",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 1
+                      }
+                    },
+                    "displayName": "Total\nAmount",
+                    "style": {
+                      "type": "basic",
+                      "bold": true,
+                      "foregroundColor": "#15803D"
+                    }
+                  },
+                  {
+                    "fieldName": "contribution_count",
+                    "columnWidth": 96,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 0
+                      }
+                    },
+                    "displayName": "Contribution\nCount"
+                  },
+                  {
+                    "fieldName": "parties_contributed_to",
+                    "columnWidth": 210,
+                    "contentAlignment": "left",
+                    "displayName": "Parties\nContributed To"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "79621506",
+      "displayName": "Global Filters",
+      "layout": [
+        {
+          "widget": {
+            "name": "b5860dfa",
+            "queries": [
+              {
+                "name": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15dfdec3418a999fbc000e8eaa468_fiscal_year",
+                "query": {
+                  "datasetName": "0ab80c5d",
+                  "fields": [
+                    {
+                      "name": "fiscal_year",
+                      "expression": "`fiscal_year`"
+                    },
+                    {
+                      "name": "fiscal_year_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e18978919b380bba28614db1ea9_fiscal_year",
+                "query": {
+                  "datasetName": "5c5b36ec",
+                  "fields": [
+                    {
+                      "name": "fiscal_year",
+                      "expression": "`fiscal_year`"
+                    },
+                    {
+                      "name": "fiscal_year_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e2cbeed1abebfe8d1016595263d_fiscal_year",
+                "query": {
+                  "datasetName": "87103869",
+                  "fields": [
+                    {
+                      "name": "fiscal_year",
+                      "expression": "`fiscal_year`"
+                    },
+                    {
+                      "name": "fiscal_year_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e2ce7031af99a9eae8b79ad5723_fiscal_year",
+                "query": {
+                  "datasetName": "41557785",
+                  "fields": [
+                    {
+                      "name": "fiscal_year",
+                      "expression": "`fiscal_year`"
+                    },
+                    {
+                      "name": "fiscal_year_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e946ef817eeb06f1698224605f5_fiscal_year",
+                "query": {
+                  "datasetName": "3b9f3835",
+                  "fields": [
+                    {
+                      "name": "fiscal_year",
+                      "expression": "`fiscal_year`"
+                    },
+                    {
+                      "name": "fiscal_year_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e94c43d139ea668df59bc27182f_fiscal_year",
+                "query": {
+                  "datasetName": "7a9d237a",
+                  "fields": [
+                    {
+                      "name": "fiscal_year",
+                      "expression": "`fiscal_year`"
+                    },
+                    {
+                      "name": "fiscal_year_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e95108b12bea855df31e89fbbeb_fiscal_year",
+                "query": {
+                  "datasetName": "6d7803c3",
+                  "fields": [
+                    {
+                      "name": "fiscal_year",
+                      "expression": "`fiscal_year`"
+                    },
+                    {
+                      "name": "fiscal_year_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e95414714c095bb9375a168be26_fiscal_year",
+                "query": {
+                  "datasetName": "da09a891",
+                  "fields": [
+                    {
+                      "name": "fiscal_year",
+                      "expression": "`fiscal_year`"
+                    },
+                    {
+                      "name": "fiscal_year_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e9592321043bbf2f09fdb58f538_fiscal_year",
+                "query": {
+                  "datasetName": "526198da",
+                  "fields": [
+                    {
+                      "name": "fiscal_year",
+                      "expression": "`fiscal_year`"
+                    },
+                    {
+                      "name": "fiscal_year_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15dfdec3418a999fbc000e8eaa468_fiscal_year",
+                "query": {
+                  "datasetName": "0ab80c5d",
+                  "parameters": [
+                    {
+                      "name": "fiscal_year",
+                      "keyword": "fiscal_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15dfe32ed1d7ea14c7813dcb73bca_fiscal_year",
+                "query": {
+                  "datasetName": "66b2dce3",
+                  "parameters": [
+                    {
+                      "name": "fiscal_year",
+                      "keyword": "fiscal_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15dfe510610a394223e334de765d5_fiscal_year",
+                "query": {
+                  "datasetName": "1c4f4982",
+                  "parameters": [
+                    {
+                      "name": "fiscal_year",
+                      "keyword": "fiscal_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15dfea0991ed0b702a95f4cbaa05e_fiscal_year",
+                "query": {
+                  "datasetName": "a4eb9b33",
+                  "parameters": [
+                    {
+                      "name": "fiscal_year",
+                      "keyword": "fiscal_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e09da061c7cbd48b1e87debec67_fiscal_year",
+                "query": {
+                  "datasetName": "ec9a7311",
+                  "parameters": [
+                    {
+                      "name": "fiscal_year",
+                      "keyword": "fiscal_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e0a1ae11f15afa1db6208d6944f_fiscal_year",
+                "query": {
+                  "datasetName": "a098a6a7",
+                  "parameters": [
+                    {
+                      "name": "fiscal_year",
+                      "keyword": "fiscal_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e0a3a4c1c9ba0d429cf06f1c7b6_fiscal_year",
+                "query": {
+                  "datasetName": "f13d4896",
+                  "parameters": [
+                    {
+                      "name": "fiscal_year",
+                      "keyword": "fiscal_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e0a439d177c9f793d0546c74450_fiscal_year",
+                "query": {
+                  "datasetName": "107d4e90",
+                  "parameters": [
+                    {
+                      "name": "fiscal_year",
+                      "keyword": "fiscal_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e0a708a1b70932bbd97966bfa2c_fiscal_year",
+                "query": {
+                  "datasetName": "1e8f1dc5",
+                  "parameters": [
+                    {
+                      "name": "fiscal_year",
+                      "keyword": "fiscal_year"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Fiscal Year"
+              },
+              "scale": {
+                "type": "categorical",
+                "sort": {
+                  "by": "natural-order-reversed"
+                }
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "fiscal_year",
+                    "queryName": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15dfdec3418a999fbc000e8eaa468_fiscal_year"
+                  },
+                  {
+                    "parameterName": "fiscal_year",
+                    "queryName": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15dfdec3418a999fbc000e8eaa468_fiscal_year"
+                  },
+                  {
+                    "parameterName": "fiscal_year",
+                    "queryName": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15dfe32ed1d7ea14c7813dcb73bca_fiscal_year"
+                  },
+                  {
+                    "parameterName": "fiscal_year",
+                    "queryName": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15dfe510610a394223e334de765d5_fiscal_year"
+                  },
+                  {
+                    "parameterName": "fiscal_year",
+                    "queryName": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15dfea0991ed0b702a95f4cbaa05e_fiscal_year"
+                  },
+                  {
+                    "parameterName": "fiscal_year",
+                    "queryName": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e09da061c7cbd48b1e87debec67_fiscal_year"
+                  },
+                  {
+                    "parameterName": "fiscal_year",
+                    "queryName": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e0a1ae11f15afa1db6208d6944f_fiscal_year"
+                  },
+                  {
+                    "parameterName": "fiscal_year",
+                    "queryName": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e0a3a4c1c9ba0d429cf06f1c7b6_fiscal_year"
+                  },
+                  {
+                    "parameterName": "fiscal_year",
+                    "queryName": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e0a439d177c9f793d0546c74450_fiscal_year"
+                  },
+                  {
+                    "parameterName": "fiscal_year",
+                    "queryName": "parameter_dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e0a708a1b70932bbd97966bfa2c_fiscal_year"
+                  },
+                  {
+                    "fieldName": "fiscal_year",
+                    "queryName": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e18978919b380bba28614db1ea9_fiscal_year"
+                  },
+                  {
+                    "fieldName": "fiscal_year",
+                    "queryName": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e2cbeed1abebfe8d1016595263d_fiscal_year"
+                  },
+                  {
+                    "fieldName": "fiscal_year",
+                    "queryName": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e2ce7031af99a9eae8b79ad5723_fiscal_year"
+                  },
+                  {
+                    "fieldName": "fiscal_year",
+                    "queryName": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e946ef817eeb06f1698224605f5_fiscal_year"
+                  },
+                  {
+                    "fieldName": "fiscal_year",
+                    "queryName": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e94c43d139ea668df59bc27182f_fiscal_year"
+                  },
+                  {
+                    "fieldName": "fiscal_year",
+                    "queryName": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e95108b12bea855df31e89fbbeb_fiscal_year"
+                  },
+                  {
+                    "fieldName": "fiscal_year",
+                    "queryName": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e95414714c095bb9375a168be26_fiscal_year"
+                  },
+                  {
+                    "fieldName": "fiscal_year",
+                    "queryName": "dashboards/01f15dfdd29719aea972cbce9468ddfc/datasets/01f15e9592321043bbf2f09fdb58f538_fiscal_year"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "46f86ccd",
+      "displayName": "Anomaly & Trend Analysis",
+      "layout": [
+        {
+          "widget": {
+            "name": "district-anomaly-detection",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "05a3084d",
+                  "fields": [
+                    {
+                      "name": "fiscal_year",
+                      "expression": "`fiscal_year`"
+                    },
+                    {
+                      "name": "contribution_count",
+                      "expression": "`contribution_count`"
+                    },
+                    {
+                      "name": "unique_contributors",
+                      "expression": "`unique_contributors`"
+                    },
+                    {
+                      "name": "avg_contribution",
+                      "expression": "`avg_contribution`"
+                    },
+                    {
+                      "name": "political_party",
+                      "expression": "`political_party`"
+                    },
+                    {
+                      "name": "total_amount",
+                      "expression": "`total_amount`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "District Anomaly Detection",
+                "showDescription": false
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#172554",
+                  "dark": "#DBEAFE"
+                }
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "political_party",
+                  "displayName": "Political Party",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "total_amount",
+                  "displayName": "Total Amount",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "fiscal_year",
+                  "legend": {
+                    "title": "Fiscal Year"
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "extra": [
+                  {
+                    "fieldName": "contribution_count"
+                  },
+                  {
+                    "fieldName": "unique_contributors"
+                  },
+                  {
+                    "fieldName": "avg_contribution"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "district_anomaly_detection_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1e8f1dc5",
+                  "fields": [
+                    {
+                      "name": "electoral_district",
+                      "expression": "`electoral_district`"
+                    },
+                    {
+                      "name": "political_party",
+                      "expression": "`political_party`"
+                    },
+                    {
+                      "name": "total_amount",
+                      "expression": "`total_amount`"
+                    },
+                    {
+                      "name": "contribution_count",
+                      "expression": "`contribution_count`"
+                    },
+                    {
+                      "name": "unique_contributors",
+                      "expression": "`unique_contributors`"
+                    },
+                    {
+                      "name": "avg_per_contributor",
+                      "expression": "`avg_per_contributor`"
+                    },
+                    {
+                      "name": "anomaly_flag",
+                      "expression": "`anomaly_flag`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "District Anomaly Detection",
+                "headerAlignment": "left"
+              },
+              "displayRowNumbers": false,
+              "freezeUpToColumnNumber": 1,
+              "headerHeight": 72,
+              "rowsPerPage": 10,
+              "headerStyle": {
+                "backgroundColor": "#334155",
+                "foregroundColor": "#F8FAFC",
+                "bold": true
+              },
+              "bandedRows": {
+                "enabled": true,
+                "backgroundColor": "#F8FAFC",
+                "fontColor": "#0F172A"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#0F172A",
+                  "dark": "#E5E7EB"
+                }
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "electoral_district",
+                    "columnWidth": 170,
+                    "contentAlignment": "left",
+                    "displayName": "Electoral District",
+                    "style": {
+                      "type": "basic",
+                      "bold": true
+                    }
+                  },
+                  {
+                    "fieldName": "political_party",
+                    "columnWidth": 140,
+                    "contentAlignment": "left",
+                    "displayName": "Political Party"
+                  },
+                  {
+                    "fieldName": "total_amount",
+                    "columnWidth": 100,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "CAD",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 1
+                      }
+                    },
+                    "displayName": "Total Amount"
+                  },
+                  {
+                    "fieldName": "contribution_count",
+                    "columnWidth": 96,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 0
+                      }
+                    },
+                    "displayName": "Contribution Count"
+                  },
+                  {
+                    "fieldName": "unique_contributors",
+                    "columnWidth": 96,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 0
+                      }
+                    },
+                    "displayName": "Unique Contributors"
+                  },
+                  {
+                    "fieldName": "avg_per_contributor",
+                    "columnWidth": 110,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "CAD",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 1
+                      }
+                    },
+                    "displayName": "Avg per Contributor"
+                  },
+                  {
+                    "fieldName": "anomaly_flag",
+                    "columnWidth": 110,
+                    "contentAlignment": "center",
+                    "displayName": "Anomaly Flag",
+                    "style": {
+                      "type": "basic",
+                      "rules": [
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "High Avg"
+                            },
+                            "operator": "="
+                          },
+                          "backgroundColor": "#DC2626",
+                          "foregroundColor": "#FFFFFF",
+                          "bold": true
+                        },
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "Single Donor"
+                            },
+                            "operator": "="
+                          },
+                          "backgroundColor": "#F59E0B",
+                          "foregroundColor": "#111827",
+                          "bold": true
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 12,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "anomaly-distribution-districts-avg-contribution",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "31e585ba",
+                  "fields": [
+                    {
+                      "name": "sum(total_in_bucket)",
+                      "expression": "SUM(`total_in_bucket`)"
+                    },
+                    {
+                      "name": "avg_bucket",
+                      "expression": "`avg_bucket`"
+                    },
+                    {
+                      "name": "sum(district_count)",
+                      "expression": "SUM(`district_count`)"
+                    },
+                    {
+                      "name": "sum(anomaly_count)",
+                      "expression": "SUM(`anomaly_count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Anomaly Distribution: Districts by Avg. Contribution"
+              },
+              "mark": {
+                "colors": [
+                  "#3B82F6",
+                  "#EF4444",
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "widgetType": "area",
+              "encodings": {
+                "x": {
+                  "fieldName": "avg_bucket",
+                  "displayName": "Avg. Bucket",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "sum(district_count)",
+                      "displayName": "Distinct Count"
+                    },
+                    {
+                      "fieldName": "sum(anomaly_count)",
+                      "displayName": "Anomaly Count"
+                    }
+                  ]
+                },
+                "label": {
+                  "show": false
+                },
+                "extra": [
+                  {
+                    "fieldName": "sum(total_in_bucket)",
+                    "displayName": "Total in Bucket"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 13,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "67622b3e",
+      "displayName": "Geographic Deep Dive",
+      "layout": [
+        {
+          "widget": {
+            "name": "top-10-provinces-by-contributions",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f65e8bc5",
+                  "fields": [
+                    {
+                      "name": "total_amount",
+                      "expression": "`total_amount`"
+                    },
+                    {
+                      "name": "province",
+                      "expression": "`province`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Top 10 Provinces by Contributions",
+                "showDescription": false
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#172554",
+                  "dark": "#DBEAFE"
+                }
+              },
+              "mark": {
+                "colors": [
+                  "#2563EB"
+                ],
+                "opacity": 0.95
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "total_amount",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "CAD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    }
+                  },
+                  "axis": {
+                    "title": "Total Contributions (CAD)"
+                  },
+                  "displayName": "Total Amount",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "province",
+                  "axis": {
+                    "title": "Province"
+                  },
+                  "displayName": "Province",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "x-reversed"
+                    }
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "93190d83",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "7dbb2692",
+                  "fields": [
+                    {
+                      "name": "total_amount",
+                      "expression": "`total_amount`"
+                    },
+                    {
+                      "name": "contributions",
+                      "expression": "`contributions`"
+                    },
+                    {
+                      "name": "province",
+                      "expression": "`province`"
+                    },
+                    {
+                      "name": "political_party",
+                      "expression": "`political_party`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "style": {
+                "fontColor": {
+                  "light": "#172554",
+                  "dark": "#DBEAFE"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Province × Party Breakdown",
+                "showDescription": false
+              },
+              "widgetType": "heatmap",
+              "encodings": {
+                "x": {
+                  "fieldName": "province",
+                  "axis": {
+                    "title": "Province",
+                    "labelAngle": 45
+                  },
+                  "displayName": "Province",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "natural-order"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "political_party",
+                  "axis": {
+                    "title": "Political Party"
+                  },
+                  "displayName": "Political Party",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "natural-order"
+                    }
+                  }
+                },
+                "color": {
+                  "fieldName": "total_amount",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "CAD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    }
+                  },
+                  "legend": {
+                    "title": "Total Contributions (CAD)",
+                    "position": "right"
+                  },
+                  "displayName": "Total Contributions",
+                  "scale": {
+                    "type": "quantitative",
+                    "colorRamp": {
+                      "mode": "scheme",
+                      "scheme": "blues"
+                    }
+                  }
+                },
+                "label": {
+                  "show": false
+                },
+                "extra": [
+                  {
+                    "fieldName": "contributions",
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 0
+                      }
+                    },
+                    "displayName": "Contribution Count"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "avg-contribution-vs-donor-count",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f65e8bc5",
+                  "fields": [
+                    {
+                      "name": "province",
+                      "expression": "`province`"
+                    },
+                    {
+                      "name": "contributions",
+                      "expression": "`contributions`"
+                    },
+                    {
+                      "name": "total_amount",
+                      "expression": "`total_amount`"
+                    },
+                    {
+                      "name": "unique_contributors",
+                      "expression": "`unique_contributors`"
+                    },
+                    {
+                      "name": "avg_contribution",
+                      "expression": "`avg_contribution`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Avg. Contribution vs Donor Count",
+                "showDescription": false
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#172554",
+                  "dark": "#DBEAFE"
+                }
+              },
+              "widgetType": "scatter",
+              "encodings": {
+                "x": {
+                  "fieldName": "unique_contributors",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 0
+                    }
+                  },
+                  "displayName": "Unique Contributors",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "avg_contribution",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "CAD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 0
+                    }
+                  },
+                  "displayName": "Avg. Contributions",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "province",
+                  "displayName": "Province",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "size": {
+                  "fieldName": "total_amount",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "extra": [
+                  {
+                    "fieldName": "province"
+                  },
+                  {
+                    "fieldName": "contributions"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 13,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "40004532",
+            "multilineTextboxSpec": {
+              "lines": [
+                "**Key takeaways**\n",
+                "\n",
+                "* **Unknown** (top-left, gray): **Few donors** but an **extremely high average contribution** (\\~$10K+). These are contributors with **no province on file** making **large donations**, which is worth investigating.\n",
+                "* **Ontario** (far right, pink): **The most donors** (\\~50K) but a **lower average contribution**. This suggests **high volume** with **smaller donation amounts**.\n",
+                "* **British Columbia** and **Alberta** (middle): **Moderate donor counts** with **moderate average contributions**.\n",
+                "* **New Brunswick**, **Nova Scotia**, and **Saskatchewan** (bottom-left cluster): **Fewer donors** and **lower average contributions**."
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 19,
+            "width": 12,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "ad28e821",
+            "multilineTextboxSpec": {
+              "lines": [
+                "**How to read this chart:** Each cell shows **total contributions** for a **province–party pair**. **Darker blue** indicates **higher contribution totals**; **lighter blue** indicates **lower totals**."
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 12,
+            "height": 1
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "3fd109f1",
+      "displayName": "Donation Group",
+      "layout": [
+        {
+          "widget": {
+            "name": "0cdc0491",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a4eb9b33",
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Bar",
+                "showDescription": false
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#172554",
+                  "dark": "#DBEAFE"
+                }
+              },
+              "widgetType": "heatmap",
+              "encodings": {}
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "50393b84",
+      "displayName": "Party Deep Dive",
+      "layout": [
+        {
+          "widget": {
+            "name": "monetary-vs-non-monetary-by-party",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f5ab0f53",
+                  "fields": [
+                    {
+                      "name": "political_party",
+                      "expression": "`political_party`"
+                    },
+                    {
+                      "name": "sum(monetary)",
+                      "expression": "SUM(`monetary`)"
+                    },
+                    {
+                      "name": "sum(non_monetary)",
+                      "expression": "SUM(`non_monetary`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Monetary vs Non-Monetary by Party",
+                "showDescription": false
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#172554",
+                  "dark": "#DBEAFE"
+                }
+              },
+              "mark": {
+                "colors": [
+                  "#2563EB",
+                  "#F59E0B",
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ],
+                "layout": "percent-stack"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "political_party",
+                  "displayName": "Political Party",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "axis": {
+                    "title": "Share of Contributions"
+                  },
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 0
+                    }
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "sum(monetary)",
+                      "displayName": "Monetary"
+                    },
+                    {
+                      "fieldName": "sum(non_monetary)",
+                      "displayName": "Non-Monetary"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "avg-contribution-vs-donor-count-by-party",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f1cbd1ca",
+                  "fields": [
+                    {
+                      "name": "political_party",
+                      "expression": "`political_party`"
+                    },
+                    {
+                      "name": "median_contribution",
+                      "expression": "`median_contribution`"
+                    },
+                    {
+                      "name": "contributions",
+                      "expression": "`contributions`"
+                    },
+                    {
+                      "name": "total_amount",
+                      "expression": "`total_amount`"
+                    },
+                    {
+                      "name": "unique_contributors",
+                      "expression": "`unique_contributors`"
+                    },
+                    {
+                      "name": "avg_contribution",
+                      "expression": "`avg_contribution`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Avg. Contribution vs Donor Count by Party",
+                "showDescription": false
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#172554",
+                  "dark": "#DBEAFE"
+                }
+              },
+              "widgetType": "scatter",
+              "encodings": {
+                "x": {
+                  "fieldName": "unique_contributors",
+                  "displayName": "Unique Contributors",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "avg_contribution",
+                  "displayName": "Avg. Contribution",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "political_party",
+                  "displayName": "Political Party",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "size": {
+                  "fieldName": "total_amount",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Total Amount"
+                },
+                "extra": [
+                  {
+                    "fieldName": "median_contribution",
+                    "displayName": "Median Contribution"
+                  },
+                  {
+                    "fieldName": "contributions",
+                    "displayName": "Coontributions"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "total-vs-average-party",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f1cbd1ca",
+                  "fields": [
+                    {
+                      "name": "political_party",
+                      "expression": "`political_party`"
+                    },
+                    {
+                      "name": "total_amount",
+                      "expression": "`total_amount`"
+                    },
+                    {
+                      "name": "avg_contribution",
+                      "expression": "`avg_contribution`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "frame": {
+                "showTitle": true,
+                "title": "Total Contributions vs Average per Party",
+                "showDescription": false
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#172554",
+                  "dark": "#DBEAFE"
+                }
+              },
+              "mark": {
+                "colors": [
+                  "#2563EB",
+                  "#F59E0B"
+                ]
+              },
+              "widgetType": "combo",
+              "encodings": {
+                "x": {
+                  "fieldName": "political_party",
+                  "displayName": "Political Party",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "axis": {
+                      "title": "Total Amount (CAD)"
+                    },
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "CAD",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 1
+                      }
+                    },
+                    "scale": {
+                      "type": "quantitative"
+                    },
+                    "fields": [
+                      {
+                        "fieldName": "total_amount",
+                        "displayName": "Total Amount"
+                      }
+                    ]
+                  },
+                  "secondary": {
+                    "axis": {
+                      "title": "Avg. Contribution (CAD)"
+                    },
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "CAD",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 1
+                      }
+                    },
+                    "scale": {
+                      "type": "quantitative"
+                    },
+                    "fields": [
+                      {
+                        "fieldName": "avg_contribution",
+                        "displayName": "Avg. Contribution"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 12,
+            "height": 8
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "20f38b30",
+      "displayName": "Contributor Behaviour",
+      "layout": [
+        {
+          "widget": {
+            "name": "one-time-vs-repeat-donors",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "41557785",
+                  "fields": [
+                    {
+                      "name": "donor_count",
+                      "expression": "`donor_count`"
+                    },
+                    {
+                      "name": "donor_type",
+                      "expression": "`donor_type`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "One-Time vs Repeat Donors"
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "donor_count",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Donor Count"
+                },
+                "color": {
+                  "fieldName": "donor_type",
+                  "displayName": "Donor Type",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "501c4023",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "f3f46a23",
+                  "fields": [
+                    {
+                      "name": "total_dollars",
+                      "expression": "`total_dollars`"
+                    },
+                    {
+                      "name": "contribution_count_bucket",
+                      "expression": "`contribution_count_bucket`"
+                    },
+                    {
+                      "name": "contributor_count",
+                      "expression": "`contributor_count`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Donor Frequency Distribution"
+              },
+              "mark": {
+                "colors": [
+                  "#8B5CF6",
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "contribution_count_bucket",
+                  "displayName": "Contribution Count Bucket",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "contributor_count",
+                  "displayName": "Contributoor Count",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "extra": [
+                  {
+                    "fieldName": "total_dollars",
+                    "displayName": "Total Dollars"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "contributor-landscape",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "87103869",
+                  "fields": [
+                    {
+                      "name": "province",
+                      "expression": "`province`"
+                    },
+                    {
+                      "name": "contributor_name",
+                      "expression": "`contributor_name`"
+                    },
+                    {
+                      "name": "num_contributions",
+                      "expression": "`num_contributions`"
+                    },
+                    {
+                      "name": "total_contributed",
+                      "expression": "`total_contributed`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Contributor Landscape"
+              },
+              "widgetType": "scatter",
+              "encodings": {
+                "x": {
+                  "fieldName": "num_contributions",
+                  "displayName": "Number of Contributions",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "total_contributed",
+                  "displayName": "Total Contributed",
+                  "scale": {
+                    "type": "quantitative",
+                    "domain": {
+                      "min": 3000,
+                      "max": 20000
+                    }
+                  }
+                },
+                "color": {
+                  "fieldName": "province",
+                  "displayName": "Province",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "extra": [
+                  {
+                    "fieldName": "contributor_name",
+                    "displayName": "Contributor Name"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "c0fb1c43",
+      "displayName": "Compliance & Anomaly Reports",
+      "layout": [
+        {
+          "widget": {
+            "name": "9befd784",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "3b9f3835",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Over-Limit Contributors",
+                "contentAlignment": "center",
+                "headerAlignment": "center"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#B91C1C",
+                  "dark": "#FCA5A5"
+                }
+              },
+              "format": {
+                "numberFormat": {
+                  "formatType": "numeral",
+                  "format": "0,0"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "count(*)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "highest-over-limit",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "3b9f3835",
+                  "fields": [
+                    {
+                      "name": "max(amount_over_limit)",
+                      "expression": "MAX(`amount_over_limit`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Highest Over-Limit",
+                "contentAlignment": "center",
+                "headerAlignment": "center"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#B45309",
+                  "dark": "#FCD34D"
+                }
+              },
+              "format": {
+                "numberFormat": {
+                  "formatType": "numeral",
+                  "format": "$0,0.00"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "max(amount_over_limit)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "978a81fb",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "3b9f3835",
+                  "fields": [
+                    {
+                      "name": "sum(amount_over_limit)",
+                      "expression": "SUM(`amount_over_limit`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total Over-Limit Amount",
+                "contentAlignment": "center",
+                "headerAlignment": "center"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#7C3AED",
+                  "dark": "#C4B5FD"
+                }
+              },
+              "format": {
+                "numberFormat": {
+                  "formatType": "numeral",
+                  "format": "$0,0.00"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(amount_over_limit)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "531aefdb",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "3b9f3835",
+                  "fields": [
+                    {
+                      "name": "contributor_name",
+                      "expression": "`contributor_name`"
+                    },
+                    {
+                      "name": "province",
+                      "expression": "`province`"
+                    },
+                    {
+                      "name": "political_party",
+                      "expression": "`political_party`"
+                    },
+                    {
+                      "name": "total_contributed",
+                      "expression": "`total_contributed`"
+                    },
+                    {
+                      "name": "annual_limit",
+                      "expression": "`annual_limit`"
+                    },
+                    {
+                      "name": "amount_over_limit",
+                      "expression": "`amount_over_limit`"
+                    },
+                    {
+                      "name": "num_contributions",
+                      "expression": "`num_contributions`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "displayRowNumbers": false,
+              "freezeUpToColumnNumber": 1,
+              "headerHeight": 72,
+              "rowsPerPage": 10,
+              "headerStyle": {
+                "backgroundColor": "#1E3A8A",
+                "foregroundColor": "#EFF6FF",
+                "bold": true
+              },
+              "bandedRows": {
+                "enabled": true,
+                "backgroundColor": "#DBEAFE",
+                "fontColor": "#0F172A"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#0F172A",
+                  "dark": "#E5E7EB"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Contributors Exceeding Annual Limit",
+                "headerAlignment": "left"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "contributor_name",
+                    "columnWidth": 180,
+                    "contentAlignment": "left",
+                    "displayName": "Contributor\nName",
+                    "style": {
+                      "type": "basic",
+                      "bold": true
+                    }
+                  },
+                  {
+                    "fieldName": "province",
+                    "columnWidth": 90,
+                    "contentAlignment": "left",
+                    "displayName": "Province"
+                  },
+                  {
+                    "fieldName": "political_party",
+                    "columnWidth": 150,
+                    "contentAlignment": "left",
+                    "displayName": "Political\nParty"
+                  },
+                  {
+                    "fieldName": "total_contributed",
+                    "columnWidth": 125,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "CAD",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 2
+                      }
+                    },
+                    "displayName": "Total\nContributed"
+                  },
+                  {
+                    "fieldName": "annual_limit",
+                    "columnWidth": 90,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "CAD",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 0
+                      }
+                    },
+                    "displayName": "Annual\nLimit"
+                  },
+                  {
+                    "fieldName": "amount_over_limit",
+                    "columnWidth": 130,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "CAD",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 2
+                      }
+                    },
+                    "displayName": "Amount Over\nLimit"
+                  },
+                  {
+                    "fieldName": "num_contributions",
+                    "columnWidth": 90,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 0
+                      }
+                    },
+                    "displayName": "Num. of Contributions"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "1c803a43",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "6d7803c3",
+                  "fields": [
+                    {
+                      "name": "contributor_name",
+                      "expression": "`contributor_name`"
+                    },
+                    {
+                      "name": "province",
+                      "expression": "`province`"
+                    },
+                    {
+                      "name": "political_party",
+                      "expression": "`political_party`"
+                    },
+                    {
+                      "name": "total_amount",
+                      "expression": "`total_amount`"
+                    },
+                    {
+                      "name": "contribution_received_date",
+                      "expression": "`contribution_received_date`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Single Contributions Exceeding Annual Limit",
+                "headerAlignment": "left"
+              },
+              "displayRowNumbers": false,
+              "freezeUpToColumnNumber": 1,
+              "headerHeight": 72,
+              "rowsPerPage": 10,
+              "headerStyle": {
+                "backgroundColor": "#1E3A8A",
+                "foregroundColor": "#EFF6FF",
+                "bold": true
+              },
+              "bandedRows": {
+                "enabled": true,
+                "backgroundColor": "#DBEAFE",
+                "fontColor": "#0F172A"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#0F172A",
+                  "dark": "#E5E7EB"
+                }
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "contributor_name",
+                    "columnWidth": 190,
+                    "contentAlignment": "left",
+                    "displayName": "Contributor\nName",
+                    "style": {
+                      "type": "basic",
+                      "bold": true
+                    }
+                  },
+                  {
+                    "fieldName": "province",
+                    "columnWidth": 120,
+                    "contentAlignment": "left",
+                    "displayName": "Province"
+                  },
+                  {
+                    "fieldName": "political_party",
+                    "columnWidth": 160,
+                    "contentAlignment": "left",
+                    "displayName": "Political\nParty"
+                  },
+                  {
+                    "fieldName": "total_amount",
+                    "columnWidth": 130,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "CAD",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 2
+                      }
+                    },
+                    "displayName": "Total\nAmount"
+                  },
+                  {
+                    "fieldName": "contribution_received_date",
+                    "columnWidth": 150,
+                    "contentAlignment": "center",
+                    "displayName": "Contribution\nReceived Date"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "high_total_across_parties_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "7a9d237a",
+                  "fields": [
+                    {
+                      "name": "contributor_name",
+                      "expression": "`contributor_name`"
+                    },
+                    {
+                      "name": "province",
+                      "expression": "`province`"
+                    },
+                    {
+                      "name": "grand_total",
+                      "expression": "`grand_total`"
+                    },
+                    {
+                      "name": "parties_count",
+                      "expression": "`parties_count`"
+                    },
+                    {
+                      "name": "parties_list",
+                      "expression": "`parties_list`"
+                    },
+                    {
+                      "name": "num_contributions",
+                      "expression": "`num_contributions`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "High-Value Contributors Across Multiple Parties",
+                "headerAlignment": "left"
+              },
+              "displayRowNumbers": false,
+              "freezeUpToColumnNumber": 1,
+              "headerHeight": 72,
+              "rowsPerPage": 10,
+              "headerStyle": {
+                "backgroundColor": "#1E3A8A",
+                "foregroundColor": "#EFF6FF",
+                "bold": true
+              },
+              "bandedRows": {
+                "enabled": true,
+                "backgroundColor": "#DBEAFE",
+                "fontColor": "#0F172A"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#0F172A",
+                  "dark": "#E5E7EB"
+                }
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "contributor_name",
+                    "columnWidth": 190,
+                    "contentAlignment": "left",
+                    "displayName": "Contributor\nName",
+                    "style": {
+                      "type": "basic",
+                      "bold": true
+                    }
+                  },
+                  {
+                    "fieldName": "province",
+                    "columnWidth": 120,
+                    "contentAlignment": "left",
+                    "displayName": "Province"
+                  },
+                  {
+                    "fieldName": "grand_total",
+                    "columnWidth": 130,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "CAD",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 2
+                      }
+                    },
+                    "displayName": "Grand\nTotal"
+                  },
+                  {
+                    "fieldName": "parties_count",
+                    "columnWidth": 95,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 0
+                      }
+                    },
+                    "displayName": "Parties\nCount"
+                  },
+                  {
+                    "fieldName": "parties_list",
+                    "columnWidth": 260,
+                    "contentAlignment": "left",
+                    "displayName": "Parties\nList"
+                  },
+                  {
+                    "fieldName": "num_contributions",
+                    "columnWidth": 120,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 0
+                      }
+                    },
+                    "displayName": "Num\nContributions"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 14,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "frequent_small_donations_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "526198da",
+                  "fields": [
+                    {
+                      "name": "contributor_name",
+                      "expression": "`contributor_name`"
+                    },
+                    {
+                      "name": "province",
+                      "expression": "`province`"
+                    },
+                    {
+                      "name": "political_party",
+                      "expression": "`political_party`"
+                    },
+                    {
+                      "name": "num_contributions",
+                      "expression": "`num_contributions`"
+                    },
+                    {
+                      "name": "total_contributed",
+                      "expression": "`total_contributed`"
+                    },
+                    {
+                      "name": "avg_per_contribution",
+                      "expression": "`avg_per_contribution`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Frequent Small Donations (10+ contributions, avg < $100)",
+                "headerAlignment": "left"
+              },
+              "displayRowNumbers": false,
+              "freezeUpToColumnNumber": 1,
+              "headerHeight": 72,
+              "rowsPerPage": 10,
+              "headerStyle": {
+                "backgroundColor": "#1E3A8A",
+                "foregroundColor": "#EFF6FF",
+                "bold": true
+              },
+              "bandedRows": {
+                "enabled": true,
+                "backgroundColor": "#DBEAFE",
+                "fontColor": "#0F172A"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#0F172A",
+                  "dark": "#E5E7EB"
+                }
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "contributor_name",
+                    "columnWidth": 190,
+                    "contentAlignment": "left",
+                    "displayName": "Contributor\nName",
+                    "style": {
+                      "type": "basic",
+                      "bold": true
+                    }
+                  },
+                  {
+                    "fieldName": "province",
+                    "columnWidth": 100,
+                    "contentAlignment": "left",
+                    "displayName": "Province"
+                  },
+                  {
+                    "fieldName": "political_party",
+                    "columnWidth": 160,
+                    "contentAlignment": "left",
+                    "displayName": "Political\nParty"
+                  },
+                  {
+                    "fieldName": "num_contributions",
+                    "columnWidth": 120,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 0
+                      }
+                    },
+                    "displayName": "Num. of Contributions"
+                  },
+                  {
+                    "fieldName": "total_contributed",
+                    "columnWidth": 120,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "CAD",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 2
+                      }
+                    },
+                    "displayName": "Total\nContributed"
+                  },
+                  {
+                    "fieldName": "avg_per_contribution",
+                    "columnWidth": 120,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "CAD",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 2
+                      }
+                    },
+                    "displayName": "Avg. Contribution"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 20,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "missing_data_large_donors_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "da09a891",
+                  "fields": [
+                    {
+                      "name": "contributor_name",
+                      "expression": "`contributor_name`"
+                    },
+                    {
+                      "name": "missing_field",
+                      "expression": "`missing_field`"
+                    },
+                    {
+                      "name": "total_contributed",
+                      "expression": "`total_contributed`"
+                    },
+                    {
+                      "name": "num_contributions",
+                      "expression": "`num_contributions`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Large Donors with Missing Information",
+                "headerAlignment": "left"
+              },
+              "displayRowNumbers": false,
+              "freezeUpToColumnNumber": 1,
+              "headerHeight": 72,
+              "rowsPerPage": 10,
+              "headerStyle": {
+                "backgroundColor": "#1E3A8A",
+                "foregroundColor": "#EFF6FF",
+                "bold": true
+              },
+              "bandedRows": {
+                "enabled": true,
+                "backgroundColor": "#DBEAFE",
+                "fontColor": "#0F172A"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#0F172A",
+                  "dark": "#E5E7EB"
+                }
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "contributor_name",
+                    "columnWidth": 360,
+                    "contentAlignment": "left",
+                    "displayName": "Contributor\nName",
+                    "style": {
+                      "type": "basic",
+                      "bold": true
+                    }
+                  },
+                  {
+                    "fieldName": "missing_field",
+                    "columnWidth": 180,
+                    "contentAlignment": "left",
+                    "displayName": "Missing\nField"
+                  },
+                  {
+                    "fieldName": "total_contributed",
+                    "columnWidth": 150,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "CAD",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 2
+                      }
+                    },
+                    "displayName": "Total\nContributed"
+                  },
+                  {
+                    "fieldName": "num_contributions",
+                    "columnWidth": 130,
+                    "contentAlignment": "right",
+                    "format": {
+                      "type": "number-plain",
+                      "abbreviation": "none",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 0
+                      }
+                    },
+                    "displayName": "Num\nContributions"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 26,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED",
+      "widgetShadow": 20
+    },
+    "applyModeEnabled": false
+  }
+}
