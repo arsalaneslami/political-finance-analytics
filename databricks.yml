@@ -1,0 +1,248 @@
+bundle:
+  name: political-finance-analytics
+
+variables:
+  catalog:
+    description: Unity Catalog name
+    default: pfin_dev
+  warehouse_id:
+    description: SQL Warehouse ID for dashboard queries
+  node_type:
+    description: VM instance type for job clusters
+    default: Standard_DS3_v2
+
+workspace:
+  host: https://adb-7405606204960019.19.azuredatabricks.net
+
+artifacts:
+  default:
+    type: whl
+    build: ""
+
+resources:
+  jobs:
+    # ── Job 1: Bronze Ingestion ─────────────────────────────
+    pfin-ingest-bronze:
+      name: pfin-${bundle.target}-ingest-bronze
+      description: "Auto Loader ingestion: landing zone → Bronze"
+      tags:
+        project: pfin
+        layer: bronze
+      tasks:
+        - task_key: ingest_bronze
+          notebook_task:
+            notebook_path: src/ingestion/01_ingest_bronze.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: ${var.node_type}
+            num_workers: 0
+            spark_conf:
+              spark.master: "local[*]"
+              spark.databricks.cluster.profile: singleNode
+            custom_tags:
+              ResourceClass: SingleNode
+
+    # ── Job 2: Silver Transformation ────────────────────────
+    pfin-transform-silver:
+      name: pfin-${bundle.target}-transform-silver
+      description: "Transformation: Bronze → Silver"
+      tags:
+        project: pfin
+        layer: silver
+      tasks:
+        - task_key: transform_silver
+          notebook_task:
+            notebook_path: src/transformation/02_transform_silver.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: ${var.node_type}
+            num_workers: 0
+            spark_conf:
+              spark.master: "local[*]"
+              spark.databricks.cluster.profile: singleNode
+            custom_tags:
+              ResourceClass: SingleNode
+
+    # ── Job 3: DQ — Silver Contributors ─────────────────────
+    pfin-dq-silver-contributors:
+      name: pfin-${bundle.target}-dq-silver-contributors
+      description: "Data Quality: normalize names and postal codes"
+      tags:
+        project: pfin
+        layer: silver
+        type: data-quality
+      tasks:
+        - task_key: dq_silver_contributors
+          notebook_task:
+            notebook_path: src/transformation/02a_dq_silver_contributors.py
+            base_parameters:
+              catalog: ${var.catalog}
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: ${var.node_type}
+            num_workers: 0
+            spark_conf:
+              spark.master: "local[*]"
+              spark.databricks.cluster.profile: singleNode
+            custom_tags:
+              ResourceClass: SingleNode
+
+    # ── Job 4: Gold Aggregation ─────────────────────────────
+    pfin-aggregate-gold:
+      name: pfin-${bundle.target}-aggregate-gold
+      description: "Aggregation: Silver → Gold"
+      tags:
+        project: pfin
+        layer: gold
+      tasks:
+        - task_key: aggregate_gold
+          notebook_task:
+            notebook_path: src/aggregation/03_aggregate_gold.py.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: ${var.node_type}
+            num_workers: 0
+            spark_conf:
+              spark.master: "local[*]"
+              spark.databricks.cluster.profile: singleNode
+            custom_tags:
+              ResourceClass: SingleNode
+
+    # ── Job 5: Compliance Rules ─────────────────────────────
+    pfin-compliance-rules:
+      name: pfin-${bundle.target}-compliance-rules
+      description: "Run compliance and analytics rules"
+      tags:
+        project: pfin
+        layer: gold
+        type: compliance
+      tasks:
+        - task_key: compliance_rules
+          notebook_task:
+            notebook_path: src/rules/04_compliance_rules.py
+            base_parameters:
+              catalog: ${var.catalog}
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: ${var.node_type}
+            num_workers: 0
+            spark_conf:
+              spark.master: "local[*]"
+              spark.databricks.cluster.profile: singleNode
+            custom_tags:
+              ResourceClass: SingleNode
+
+    # ── Job 6: Full Pipeline (Orchestrator) ─────────────────
+    pfin-full-pipeline:
+      name: pfin-${bundle.target}-full-pipeline
+      description: "End-to-end pipeline: Bronze → Silver → DQ → Gold → Compliance"
+      tags:
+        project: pfin
+        type: orchestrator
+      tasks:
+        - task_key: step_1_ingest_bronze
+          notebook_task:
+            notebook_path: src/ingestion/01_ingest_bronze.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: ${var.node_type}
+            num_workers: 0
+            spark_conf:
+              spark.master: "local[*]"
+              spark.databricks.cluster.profile: singleNode
+            custom_tags:
+              ResourceClass: SingleNode
+
+        - task_key: step_2_transform_silver
+          depends_on:
+            - task_key: step_1_ingest_bronze
+          notebook_task:
+            notebook_path: src/transformation/02_transform_silver.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: ${var.node_type}
+            num_workers: 0
+            spark_conf:
+              spark.master: "local[*]"
+              spark.databricks.cluster.profile: singleNode
+            custom_tags:
+              ResourceClass: SingleNode
+
+        - task_key: step_3_dq_silver
+          depends_on:
+            - task_key: step_2_transform_silver
+          notebook_task:
+            notebook_path: src/transformation/02a_dq_silver_contributors.py
+            base_parameters:
+              catalog: ${var.catalog}
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: ${var.node_type}
+            num_workers: 0
+            spark_conf:
+              spark.master: "local[*]"
+              spark.databricks.cluster.profile: singleNode
+            custom_tags:
+              ResourceClass: SingleNode
+
+        - task_key: step_4_aggregate_gold
+          depends_on:
+            - task_key: step_3_dq_silver
+          notebook_task:
+            notebook_path: src/aggregation/03_aggregate_gold.py.ipynb
+            base_parameters:
+              catalog: ${var.catalog}
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: ${var.node_type}
+            num_workers: 0
+            spark_conf:
+              spark.master: "local[*]"
+              spark.databricks.cluster.profile: singleNode
+            custom_tags:
+              ResourceClass: SingleNode
+
+        - task_key: step_5_compliance_rules
+          depends_on:
+            - task_key: step_4_aggregate_gold
+          notebook_task:
+            notebook_path: src/rules/04_compliance_rules.py
+            base_parameters:
+              catalog: ${var.catalog}
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: ${var.node_type}
+            num_workers: 0
+            spark_conf:
+              spark.master: "local[*]"
+              spark.databricks.cluster.profile: singleNode
+            custom_tags:
+              ResourceClass: SingleNode
+
+targets:
+  dev:
+    mode: development
+    default: true
+    variables:
+      catalog: pfin_dev
+    workspace:
+      host: https://adb-7405606204960019.19.azuredatabricks.net
+
+  prod:
+    mode: production
+    variables:
+      catalog: pfin_prod
+    workspace:
+      host: https://adb-7405606204960019.19.azuredatabricks.net
+    run_as:
+      service_principal_name: pfin-databricks-sp
