@@ -7,17 +7,13 @@ variables:
     default: pfin_dev
   warehouse_id:
     description: SQL Warehouse ID for dashboard queries
+    default: "40538d27fa86191c"
   node_type:
     description: VM instance type for job clusters
-    default: Standard_DS3_v2
+    default: Standard_D4pds_v6
 
 workspace:
   host: https://adb-7405606204960019.19.azuredatabricks.net
-
-artifacts:
-  default:
-    type: whl
-    build: ""
 
 resources:
   jobs:
@@ -35,6 +31,7 @@ resources:
             base_parameters:
               catalog: ${var.catalog}
           new_cluster:
+            data_security_mode: SINGLE_USER
             spark_version: "15.4.x-scala2.12"
             node_type_id: ${var.node_type}
             num_workers: 0
@@ -58,6 +55,7 @@ resources:
             base_parameters:
               catalog: ${var.catalog}
           new_cluster:
+            data_security_mode: SINGLE_USER
             spark_version: "15.4.x-scala2.12"
             node_type_id: ${var.node_type}
             num_workers: 0
@@ -82,6 +80,7 @@ resources:
             base_parameters:
               catalog: ${var.catalog}
           new_cluster:
+            data_security_mode: SINGLE_USER
             spark_version: "15.4.x-scala2.12"
             node_type_id: ${var.node_type}
             num_workers: 0
@@ -105,6 +104,7 @@ resources:
             base_parameters:
               catalog: ${var.catalog}
           new_cluster:
+            data_security_mode: SINGLE_USER
             spark_version: "15.4.x-scala2.12"
             node_type_id: ${var.node_type}
             num_workers: 0
@@ -129,6 +129,7 @@ resources:
             base_parameters:
               catalog: ${var.catalog}
           new_cluster:
+            data_security_mode: SINGLE_USER
             spark_version: "15.4.x-scala2.12"
             node_type_id: ${var.node_type}
             num_workers: 0
@@ -152,6 +153,7 @@ resources:
             base_parameters:
               catalog: ${var.catalog}
           new_cluster:
+            data_security_mode: SINGLE_USER
             spark_version: "15.4.x-scala2.12"
             node_type_id: ${var.node_type}
             num_workers: 0
@@ -169,6 +171,7 @@ resources:
             base_parameters:
               catalog: ${var.catalog}
           new_cluster:
+            data_security_mode: SINGLE_USER
             spark_version: "15.4.x-scala2.12"
             node_type_id: ${var.node_type}
             num_workers: 0
@@ -186,6 +189,7 @@ resources:
             base_parameters:
               catalog: ${var.catalog}
           new_cluster:
+            data_security_mode: SINGLE_USER
             spark_version: "15.4.x-scala2.12"
             node_type_id: ${var.node_type}
             num_workers: 0
@@ -203,6 +207,7 @@ resources:
             base_parameters:
               catalog: ${var.catalog}
           new_cluster:
+            data_security_mode: SINGLE_USER
             spark_version: "15.4.x-scala2.12"
             node_type_id: ${var.node_type}
             num_workers: 0
@@ -220,6 +225,7 @@ resources:
             base_parameters:
               catalog: ${var.catalog}
           new_cluster:
+            data_security_mode: SINGLE_USER
             spark_version: "15.4.x-scala2.12"
             node_type_id: ${var.node_type}
             num_workers: 0
