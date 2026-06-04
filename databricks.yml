@@ -14,6 +14,12 @@ variables:
 
 workspace:
   host: https://adb-7405606204960019.19.azuredatabricks.net
+  
+permissions:
+  - service_principal_name: "1ffe180c-89d4-45b4-974f-17a44199a3ca"
+    level: CAN_MANAGE
+  - user_name: arsalan@areslamihotmail.onmicrosoft.com
+    level: CAN_MANAGE
 
 resources:
   jobs:
@@ -251,3 +257,4 @@ targets:
     workspace:
       host: https://adb-7405606204960019.19.azuredatabricks.net
       root_path: /Workspace/Users/arsalan@areslamihotmail.onmicrosoft.com/.bundle/${bundle.name}/${bundle.target}
+      
