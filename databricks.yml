@@ -250,5 +250,3 @@ targets:
       catalog: pfin_prod
     workspace:
       host: https://adb-7405606204960019.19.azuredatabricks.net
-    run_as:
-      service_principal_name: pfin-databricks-sp

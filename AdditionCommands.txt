@@ -1,0 +1,30 @@
+SHOW CATALOGS;
+USE CATALOG pfin_dev;
+
+SELECT USER_NAME();
+
+SHOW SCHEMAS;
+USE SCHEMA silver;
+
+/*
+The column masks we applied earlier conflict with SINGLE_USER cluster mode. Tables with column masks require USER_ISOLATION mode, which needs multi-node clusters (more expensive).
+Also important: your silver transformation uses mode("overwrite") with overwriteSchema, which would drop the masks on each run anyway.
+Best approach: remove the masks from the table, and re-apply them as the last step in the pipeline after all writes are done.
+*/
+
+-- Drop masks from silver.contributors
+ALTER TABLE pfin_dev.silver.contributors ALTER COLUMN contributor_name DROP MASK;
+ALTER TABLE pfin_dev.silver.contributors ALTER COLUMN contributor_first_name DROP MASK;
+ALTER TABLE pfin_dev.silver.contributors ALTER COLUMN contributor_last_name DROP MASK;
+ALTER TABLE pfin_dev.silver.contributors ALTER COLUMN contributor_middle_initial DROP MASK;
+ALTER TABLE pfin_dev.silver.contributors ALTER COLUMN contributor_postal_code DROP MASK;
+
+USE SCHEMA gold;
+-- Drop mask from gold.top_contributors
+ALTER TABLE pfin_dev.gold.top_contributors ALTER COLUMN contributor_name DROP MASK;
+
+# Get the SP's Databricks internal ID
+databricks service-principals list --output json
+142483713313666
+
+databricks permissions update service-principal 142483713313666 --json '{"access_control_list": [{"user_name": "arsalan@areslamihotmail.onmicrosoft.com", "permission_level": "CAN_USE"}]}'
