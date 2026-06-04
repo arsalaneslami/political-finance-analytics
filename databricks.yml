@@ -250,3 +250,4 @@ targets:
       catalog: pfin_prod
     workspace:
       host: https://adb-7405606204960019.19.azuredatabricks.net
+      root_path: /Workspace/Users/arsalan@areslamihotmail.onmicrosoft.com/.bundle/${bundle.name}/${bundle.target}
