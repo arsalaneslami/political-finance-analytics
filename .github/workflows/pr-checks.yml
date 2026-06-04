@@ -1,0 +1,44 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+env:
+  DATABRICKS_HOST: https://adb-7405606204960019.19.azuredatabricks.net
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+jobs:
+  validate:
+    name: Validate Bundle
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Databricks CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+
+      - name: Configure Databricks auth
+        run: |
+          cat > ~/.databrickscfg << EOF
+          [DEFAULT]
+          host = ${{ env.DATABRICKS_HOST }}
+          client_id = ${{ secrets.AZURE_CLIENT_ID }}
+          client_secret = ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant_id = ${{ secrets.AZURE_TENANT_ID }}
+          auth_type = azure-client-secret
+          EOF
+
+      - name: Validate bundle
+        run: databricks bundle validate --target dev
+
+      - name: Check Python syntax
+        run: |
+          python -m py_compile src/ingestion/01_ingest_bronze.ipynb || true
+          python -m py_compile src/transformation/02a_dq_silver_contributors.py
+          python -m py_compile src/rules/04_compliance_rules.py
+          echo "Syntax check complete"

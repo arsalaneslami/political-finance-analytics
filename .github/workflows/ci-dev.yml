@@ -1,0 +1,40 @@
+name: CI — Deploy to Dev
+
+on:
+  push:
+    branches: [develop]
+
+env:
+  DATABRICKS_HOST: https://adb-7405606204960019.19.azuredatabricks.net
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+jobs:
+  deploy-dev:
+    name: Deploy Bundle to Dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Databricks CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+
+      - name: Configure Databricks auth
+        run: |
+          cat > ~/.databrickscfg << EOF
+          [DEFAULT]
+          host = ${{ env.DATABRICKS_HOST }}
+          client_id = ${{ secrets.AZURE_CLIENT_ID }}
+          client_secret = ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant_id = ${{ secrets.AZURE_TENANT_ID }}
+          auth_type = azure-client-secret
+          EOF
+
+      - name: Validate bundle
+        run: databricks bundle validate --target dev
+
+      - name: Deploy to dev
+        run: databricks bundle deploy --target dev
